@@ -2,11 +2,12 @@ CPPFLAGS := \
 	--std=c++2a \
 	-Wall
 
+PROGS := client server
+
 .PHONY: build
-build: client
+build: $(PROGS)
 
-# server: server.cpp
-# 	$(CXX) $(CPPFLAGS) $(CFLAGS) -c $<
 
-client: shared.cpp client.cpp
+$(PROGS): %: %.cpp shared.cpp
 	$(CXX) $(CPPFLAGS) $(CFLAGS) -o $@ $^
+
