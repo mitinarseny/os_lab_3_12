@@ -48,10 +48,8 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	msg_t msg {
-		.mtype = MSG_TYPE,
-	};
-	for (auto [count, n] = std::tuple{0, 0}; n = read(fds[0], msg.mtext + count, sizeof(msg.mtext) - count); count += n) {
+	clientMsg_t msg;
+	for (auto [count, n] = std::tuple{0, 0}; n = read(fds[0], msg.cal + count, sizeof(msg.cal) - count); count += n) {
 		if (n == -1) {
 			if (errno == EINTR) {
 				continue;
@@ -60,7 +58,7 @@ int main() {
 			break;
 		}
 
-		printf("%s", msg.mtext + count); // todo: send to socket
+		printf("%s", msg.cal + count); // todo: send to socket
 	}
 	
 	int ws;
@@ -72,8 +70,10 @@ int main() {
 	if (ws != EXIT_SUCCESS) {
 		return EXIT_FAILURE;
 	}
-
-	if (::msgsnd(mqID, &msg, sizeof(msg.mtext), IPC_NOWAIT) == -1) {
+	msgbuf_t msgbuf {
+		.msg = msg,
+	};
+	if (::msgsnd(mqID, &msgbuf, sizeof(msgbuf.msg), IPC_NOWAIT) == -1) {
 		std::perror("msgsnd");
 		return EXIT_FAILURE;
 	}
