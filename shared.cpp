@@ -10,6 +10,20 @@
 const std::string PATH = "/tmp/os_lab_mq";
 constexpr int     ID   = 1234;
 
+std::ostream& operator <<(std::ostream& os, Weekday wd) {
+	std::string s;
+	switch (wd) {
+	case Weekday::mon: s = "monday";   break;
+	case Weekday::tue: s = "tuesday";  break;
+	case Weekday::wed: s = "wensday";  break;
+	case Weekday::thu: s = "thursday"; break;
+	case Weekday::fri: s = "friday";   break;
+	case Weekday::sat: s = "saturday"; break;
+	case Weekday::sun: s = "sunday";   break;
+	}
+	return os << s;
+}
+
 key_t getMQKey() {
 	std::system(("touch " + PATH).c_str());
 	key_t key = ::ftok(PATH.c_str(), ID);
@@ -21,7 +35,6 @@ key_t getMQKey() {
 
 int getMQID() {
 	key_t key = getMQKey();
-	std::cout << "MQ KEY: " << key << std::endl;
 	int id = ::msgget(getMQKey(), IPC_CREAT | 0666);
 	if (id == -1) {
 		std::perror("msgget");

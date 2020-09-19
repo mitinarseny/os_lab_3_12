@@ -6,15 +6,36 @@
 #include <sys/msg.h>
 #include <sys/wait.h>
 
+#include <cstdint>
 #include <string>
 
 constexpr long MSG_TYPE = 1;
 
 constexpr std::size_t CAL_SIZE = 1024;
 
+enum struct Weekday: std::uint8_t {mon, tue, wed, thu, fri, sat, sun};
+
+
+template <typename T>
+Weekday operator +(Weekday l, T r) {
+	return static_cast<Weekday>((static_cast<int>(l) + static_cast<int>(r)) % (static_cast<int>(Weekday::sun) + 1));
+}
+
+template <typename T>
+Weekday operator -(Weekday l, T r) {
+	return l + (-r);
+}
+
+template <typename T>
+Weekday& operator +=(Weekday& wd, T r) {
+	return wd = wd + r;
+}
+
+std::ostream& operator <<(std::ostream& os, Weekday wd);
+
 struct clientMsg_t {
 	pid_t PID;
-	unsigned char cal[CAL_SIZE];
+	char cal[CAL_SIZE];
 };
 
 struct msgbuf_t {

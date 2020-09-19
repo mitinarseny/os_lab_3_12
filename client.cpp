@@ -6,12 +6,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 #include "shared.h"
 
 int main() {
 	int mqID = getMQID();
-	printf("mqID: %d\n", mqID);
+	pid_t PID = ::getpid();
+	std::cout << "[C] MQ ID: " << mqID << ", PID: " << PID << std::endl;
 
 	int fds[2];
 	if (pipe(fds) != 0) {
@@ -48,26 +50,28 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	clientMsg_t msg;
+	clientMsg_t msg {
+		.PID = PID,
+	};
 	for (auto [count, n] = std::tuple{0, 0}; n = read(fds[0], msg.cal + count, sizeof(msg.cal) - count); count += n) {
 		if (n == -1) {
 			if (errno == EINTR) {
 				continue;
 			}
 			std::perror("read");
-			break;
+			return EXIT_FAILURE;
 		}
-
-		printf("%s", msg.cal + count); // todo: send to socket
+		// std::cout << msg.cal + count;
 	}
 	
 	int ws;
 	if (waitpid(chPID, &ws, 0) == -1) {
-		perror("waitpid");
+	  std::perror("waitpid");
 		return EXIT_FAILURE;
 	}
-	printf("[PARENT]: child %d exited with code %d\n", chPID, ws);
+	
 	if (ws != EXIT_SUCCESS) {
+		std::cerr << "cal (PID " << chPID << ") exited with code " << ws << std::endl; 
 		return EXIT_FAILURE;
 	}
 	msgbuf_t msgbuf {
@@ -77,6 +81,8 @@ int main() {
 		std::perror("msgsnd");
 		return EXIT_FAILURE;
 	}
+
+	std::cout << "[C] message was sent!" << std::endl;
 
 	return EXIT_SUCCESS;
 }

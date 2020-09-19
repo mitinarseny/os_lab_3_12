@@ -1,2 +1,7 @@
 client
 server
+CMakeCache.txt
+CmakeFiles
+*.dSYM
+cmake_install.cmake
+Makefile
