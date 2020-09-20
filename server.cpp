@@ -61,7 +61,7 @@ void process(clientMsg_t& msg) {
 
 int main() {
 	int mqID = getMQID();
-	std::cout << "MQ ID: " << mqID << std::endl;
+	std::cout << "[S] MQ ID: " << mqID << std::endl;
 	
 	msgbuf_t msgbuf;
 	while (auto s = rcv(mqID, msgbuf)) {

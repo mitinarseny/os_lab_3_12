@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <fcntl.h>
 
 #include <string>
 #include <iostream>
@@ -25,6 +26,10 @@ std::ostream& operator <<(std::ostream& os, Weekday wd) {
 }
 
 key_t getMQKey() {
+	if (::creat(PATH.c_str(), 0666) == -1) {
+		std::perror("creat");
+		return -1;
+	}
 	std::system(("touch " + PATH).c_str());
 	key_t key = ::ftok(PATH.c_str(), ID);
 	if (key == -1) {

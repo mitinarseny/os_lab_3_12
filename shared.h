@@ -15,10 +15,13 @@ constexpr std::size_t CAL_SIZE = 1024;
 
 enum struct Weekday: std::uint8_t {mon, tue, wed, thu, fri, sat, sun};
 
+inline int mod(int a, int b) {
+	return (a % b + b) % b;
+}
 
 template <typename T>
 Weekday operator +(Weekday l, T r) {
-	return static_cast<Weekday>((static_cast<int>(l) + static_cast<int>(r)) % (static_cast<int>(Weekday::sun) + 1));
+	return static_cast<Weekday>(mod(static_cast<int>(l) + static_cast<int>(r), static_cast<int>(Weekday::sun) + 1));
 }
 
 template <typename T>
