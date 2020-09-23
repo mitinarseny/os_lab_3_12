@@ -45,3 +45,7 @@ int getMQID() {
 	}
 	return id;
 }
+
+void rmMQ(int) {
+	::msgctl(getMQID(), IPC_RMID, nullptr);
+}

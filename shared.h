@@ -50,4 +50,6 @@ key_t getMQKey();
 
 int getMQID();
 
+void rmMQ(int);
+
 #endif // SHARED_H

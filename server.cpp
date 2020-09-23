@@ -2,6 +2,7 @@
 
 #include <sys/types.h>
 #include <sys/msg.h>
+#include <signal.h>
 
 #include <iostream>
 #include <string>
@@ -62,11 +63,21 @@ void process(clientMsg_t& msg) {
 int main() {
 	int mqID = getMQID();
 	std::cout << "[S] MQ ID: " << mqID << std::endl;
+
+	struct sigaction act;
+    // act.sa_flags = SA_RESTART;
+    act.sa_handler = &rmMQ;
+    if (sigaction(SIGINT, &act, NULL) == -1) {
+        perror("sigaction");
+        return EXIT_FAILURE;
+    }
 	
 	msgbuf_t msgbuf;
 	while (auto s = rcv(mqID, msgbuf)) {
-		if (s == -1)
+		if (s == -1) {
+			// ::msgctl(mqID, IPC_RMID, nullptr);
 			return EXIT_FAILURE;
+		}
 		
 		std::cout << "[S] ";
 		process(msgbuf.msg);
