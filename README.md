@@ -8,7 +8,8 @@
 ## Build
 
 ```sh
-cmake .
+mkdir -p build && cd build
+cmake ..
 make
 ```
 
