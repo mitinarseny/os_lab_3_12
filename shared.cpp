@@ -30,7 +30,6 @@ key_t getMQKey() {
 		std::perror("creat");
 		return -1;
 	}
-	std::system(("touch " + PATH).c_str());
 	key_t key = ::ftok(PATH.c_str(), ID);
 	if (key == -1) {
 		std::perror("ftok");
