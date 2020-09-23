@@ -39,7 +39,7 @@ key_t getMQKey() {
 
 int getMQID() {
 	key_t key = getMQKey();
-	int id = ::msgget(getMQKey(), IPC_CREAT | 0666);
+	int id = ::msgget(key, IPC_CREAT | 0666);
 	if (id == -1) {
 		std::perror("msgget");
 	}
